@@ -1,0 +1,69 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Worked example from lecture notes</title>
+<style>
+#canvas
+{
+    border:1px solid black;
+                width:500px;
+                height:500px;
+}
+
+#loadingMessage
+{
+    position:absolute;
+                top:100px;
+                left:100px;
+                z-index:100;
+                font-size:50px;
+}
+</style>
+
+<script>
+ 
+ 
+
+let canvas = null
+let ctx = null
+
+window.onload = onAllAssetsLoaded
+document.write("<div id='loadingMessage'>Loading...</div>")
+function onAllAssetsLoaded()
+{
+    // hide the webpage loading message
+    document.getElementById('loadingMessage').style.visibility = "hidden"
+
+    canvas = document.getElementById("canvas")
+    ctx = canvas.getContext("2d")
+    canvas.width = canvas.clientWidth
+    canvas.height = canvas.width
+
+    renderCanvas()
+}
+
+
+function renderCanvas()
+{
+    ctx.fillStyle = "red"
+    ctx.strokeStyle = "blue"
+    ctx.font = "200px Arial"
+    ctx.lineWidth = 10
+    ctx.strokeText("DkIT", 50, 350)
+    ctx.fillText("DkIT", 50, 350)
+    
+	
+	
+}
+</script>
+</head>
+
+<body>
+<canvas id = "canvas">
+Your browser does not support the HTML5 'Canvas' tag.
+</canvas>
+</body>
+</html>

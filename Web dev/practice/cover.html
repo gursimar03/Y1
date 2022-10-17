@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>_------_</title>
+    <style>
+        img,
+        canvas {
+            width: 500px;
+            height: 500px;
+            border: thin solid black;
+        }
+
+        #loadingMessage {
+            position: absolute;
+            top: 100px;
+            left: 100px;
+            z-index: 100;
+            font-size: 50px;
+        }
+    </style>
+
+    <script>
+        let canvas = null;
+        let ctx = null;
+        let originalImage = null;
+        let width = null;
+        let height = null;
+        let alphaImage = new Image();
+       
+        window.onload = onAllAssetsLoaded;
+        document.write("<div id='loadingMessage'>Loading...</div>");
+        function onAllAssetsLoaded() {
+
+            document.getElementById('loadingMessage').style.visibility = "hidden";
+
+            originalImage = document.getElementById('originalImage');
+            canvas = document.getElementById('canvas');
+            ctx = canvas.getContext('2d');
+            width = originalImage.clientWidth;
+            height = originalImage.clientHeight;
+            canvas.width = width;
+            canvas.height = height;
+
+            renderCanvas();
+        }
+
+
+        function renderCanvas(text) {
+            
+            
+            ctx.clearRect(0,0,canvas.width,canvas.height)
+
+            ctx.beginPath();
+            ctx.fillStyle = "black";
+            ctx.font = "170px Calibri";
+
+            console.log(text)
+            ctx.fillText(text, 25, 200);
+            ctx.closePath();
+
+            // 2) select the alpha composite
+            ctx.globalCompositeOperation = 'source-out';
+
+            // 3) draw the original image
+            // only the part that overlaps the alpha area will be visible
+            ctx.drawImage(originalImage, 0, 0, width, height);
+            
+        }
+    </script>
+</head>
+
+<body>
+    <img id='originalImage'
+        src='https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8ZGFya3xlbnwwfHwwfHw%3D&w=1000&q=80'>
+    <canvas id='canvas'></canvas>
+    <input type="text" id="texter" name="texter" value="dkit">
+    <button onclick="renderCanvas(document.getElementById('texter').value)" type="submit">Submit</button>
+</body>
+
+</html>

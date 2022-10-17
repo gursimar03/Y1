@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worked example from lecture notes</title>
+    <style>
+        #canvas,
+        #canvasImage {
+            border: 1px solid black;
+            width: 200px;
+            height: 200px;
+        }
+
+        #canvasImageContainer {
+            margin-top: 150px;
+        }
+
+        p {
+            margin: 0px;
+        }
+
+        #loadingMessage {
+            position: absolute;
+            top: 100px;
+            left: 100px;
+            z-index: 100;
+            font-size: 50px;
+        }
+    </style>
+
+    <script>
+        const DOT_WIDTH = 20   /* The dimensions of the black squares that are drawn on the canvas */
+        const DOT_HEIGHT = 20
+
+        let canvas = null
+        let ctx = null
+        let x = null
+        let y = null
+
+        window.onload = onAllAssetsLoaded
+        document.write("<div id='loadingMessage'>Loading...</div>")
+        function onAllAssetsLoaded() {
+            // hide the webpage loading message
+            document.getElementById('loadingMessage').style.visibility = "hidden"
+
+            canvas = document.getElementById("canvas")
+            ctx = canvas.getContext("2d")
+            canvas.width = canvas.clientWidth
+            canvas.height = canvas.clientHeight
+
+            renderCanvas()
+
+            canvas.addEventListener('click', canvasClickHandler)
+        }
+
+
+        let isFirstTimeToRender = true
+        let isDrawingADot = false
+        
+        function renderCanvas() {
+            if (isFirstTimeToRender) {
+                isFirstTimeToRender = false
+
+                /* set the canvas background colour */
+                ctx.fillStyle = "red"
+                ctx.fillRect(0, 0, 200, 200)
+            }
+            else if (isDrawingADot) {
+                isDrawingADot = false
+                ctx.fillStyle = "black"
+                ctx.fillRect(x - (DOT_WIDTH / 2), y - (DOT_HEIGHT / 2), DOT_WIDTH, DOT_HEIGHT)
+            }
+
+            for (let i = 0; i < data.length; i += 4) {
+                data[i + 0] = data[i + 0] - data[i + 0] % 64;
+                data[i + 1] = data[i + 1] - data[i + 1] % 64;
+                data[i + 2] = data[i + 2] - data[i + 2] % 64;
+                data[i + 3] = 255;
+            }
+
+            ctx.putImageData(imageData, 0, 0);
+        }
+
+
+        function canvasClickHandler(e) {
+            if (e.which === 1) {
+                isDrawingADot = true
+                x = window.event.clientX
+                y = window.event.clientY
+
+                renderCanvas()
+
+            }
+        }
+        let c = document.getElementById("canvas")
+
+        function download_image() {
+            let canvas = document.getElementById("canvas")
+            image = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream")
+            let link = document.createElement('a')
+            link.download = "my-image.png"
+            link.href = image
+            link.click()
+        }
+
+
+    </script>
+</head>
+
+<body>
+    <div>
+        <canvas id="canvas">
+            Your browser does not support the HTML5 'Canvas' tag.
+        </canvas>
+        <p>Click on the canvas above to add black squares onto it.</p>
+        <p>Try right-clicking it. You will notice that you cannot save it as an image to your desktop.</p>
+    </div>
+    <button onclick="download_image()">
+        Download
+    </button>
+
+</body>
+
+</html>

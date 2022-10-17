@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<!--
+    Web Development CA 4
+    Created on : 25 Apr 2022, 09:57:15
+    Author     : Gursimar, Patrick, Matthew
+    Group      : SD1c
+-->
+<html>
+    <head>
+        <title>CANVAS</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" type="image/png" href="images/canvas.jpg">
+        <link href="css/main.css" rel="stylesheet" type="text/css"/>
+        <link href="css/canvas.css" rel="stylesheet" type="text/css"/>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Fjalla+One&family=Nothing+You+Could+Do&family=Updock&display=swap" rel="stylesheet">
+    </head>
+    <body>
+        <div id="mainFrame">
+            <div id="headText">CANVAS</div>
+            <div id="rotate_hover">
+                <!-- https://freesvg.org/odd-circle-frame-vector-drawing -->
+                <object id="button_border" class="mainFrame_button" type="image/svg+xml" data="oddcircleframe.svg"
+                        width="100" height="100"></object>
+                <div onclick="mainBackdrop()" class="mainFrame_button" id="x_button">X</div>
+                <svg id="background_button" class="mainFrame_button" height="100" width="100">
+                <circle cx="50" cy="54" r="48" />
+                </svg>
+            </div>
+        </div>
+        <div id = "grid-container">
+            <div id = "navbar-container">
+                <div class="navbar">
+                    <div id = "title">
+                        Welcome To CANVAS
+                    </div>
+                </div> 
+            </div>
+            <div id = "canvas-container">
+                <canvas id="myCanvas">Browser does not support Canvas</canvas>
+            </div>  
+            <div id ="layers">
+                <div id="imagesShow">
+                </div>
+            </div>
+            <div id = "forms-container-right">
+                <fieldset>
+                    <div class="drawButtons" id="colors">
+                        <label for="recentColor">Color: </label>
+                        <input type="color" value="#FF0000" id="recentColor" name="recentColor">
+                    </div>
+                    <div class="drawButtons" id="size">
+                        <label for="recentSize">Size: </label>
+                        <input type="range" id="recentSize" name="recentSize" min="1" max="100" value="10" onchange="updateTextInput(this.value);">
+                        <input type="text" id="textInput" maxlength="3" size="3" value="10">
+                    </div>
+                    <div class="drawButtons" id="text">
+                        <label for="recentText">Add Text: </label>
+                        <input type="text" id="recentText" name="recentText" value="">
+                    </div>
+                    <button class="drawButtons" id="brush"><img class="draw" alt="brush" src="images/brush.jpg" width="25" height="25">
+                    </button>
+                    <button class="drawButtons" id="eraser"><img class="draw" alt="eraser" src="images/eraser.jpg" width="25" height="25"></button><br><br>
+                    <code id="colorcode"></code>
+                    <a class="drawButtons" href="" id="saveLink"><button id="save">Save</button></a>
+                    <button class="drawButtons" id="reset">Reset</button>
+                </fieldset>
+                <fieldset>
+                    <label>Canvas Filters:</label><br><br>
+                    <div class="imageEditButtons">
+                        <label>Brightness:</label><br>
+                        <input id="brightness" type="range" value="1.5" min="-1" max="4" step="0.05" onchange="setBrightness(this.value)" />
+                    </div>
+                    <div class="imageEditButtons">
+                        <label for="rotation">Rotate:</label><br>
+                        <input type="range" id="rotation" name="rotation" value="0" min="0" max="360" oninput="setRotationDegrees(this.value)">
+                    </div><br>
+                    <div class="imageEditButtons">
+                        <label>Gray Scale:</label>
+                        <input type="checkbox" onchange="setGrayscale(this.checked)">
+                    </div>
+                    <div class="imageEditButtons">
+                        <label>Sepia:</label>
+                        <input type="checkbox" onchange="setSepia(this.checked)">
+                    </div>
+                    <div class="imageEditButtons">
+                        <label>Invert Colours:</label>
+                        <input type="checkbox" onchange="setInvert(this.checked)">
+                    </div>
+                    <div class="imageEditButtons">
+                        <label>Posterise:</label>
+                        <input type="checkbox" onchange="setPosterise(this.checked)">
+                    </div>
+                    <div class="imageEditButtons">
+                        <label>Threshold:</label>
+                        <input type="checkbox" onchange="setThreshold(this.checked)">
+                    </div>
+                </fieldset>
+            </div>
+            <div id ="forms-container-left">
+                <fieldset>
+                    <label>Convolutions:</label><br><br>
+                    <div class="imageEditButtons">
+                        <button class="drawButtons" onclick = "setConvolution(embossConvolutionMatrix)">Emboss</button><br><br>
+                        <button class="drawButtons" onclick = "setConvolution(blurConvolutionMatrix)">Blur</button><br><br>
+                        <button class="drawButtons" onclick = "setConvolution(sharpenConvolutionMatrix)">Sharpen</button><br><br>
+                        <button class="drawButtons" onclick = "setConvolution(edgeDetectionConvolutionMatrix)">Edge Detection</button><br><br>
+                        <button class="drawButtons" onclick = "setConvolution(noConvolutionMatrix)">None</button>
+                    </div><br>
+                    <label>Alpha Composites:</label><br><br>
+                    <div class="imageEditButtons">
+                        <label>Turn On Alpha:</label>
+                        <select id = 'selection' onchange="renderCanvasForAplhaComposits()">
+                            <option value="none">none</option>
+                            <option value="source-in">source-in</option>
+                            <option value="source-out">source-out</option>
+                            <option value="source-atop">source-atop</option>
+                            <option value="source-over">source-over</option>
+                            <option value="destination-in">destination-in</option>
+                            <option value="destination-out">destination-out</option>
+                            <option value="destination-atop">destination-atop</option>
+                            <option value="destination-over">destination-over</option>
+                            <option value="lighter">lighter</option>
+                            <option value="darker">darker</option>
+                            <option value="xor">xor</option>
+                            <option value="copy">copy</option>
+                        </select>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+        <div id = "footer">
+            <footer> <!-- Footer -->
+                <span>&copy; CANVAS Copyright 2022 - By Patrick, Gursimar, Matthew, SD1C</span>
+                <span id="date"></span>
+            </footer>
+        </div>
+        <script src="js/main.js" type="text/javascript"></script>
+        <script src="js/canvas.js" type="text/javascript"></script>
+    </body>
+</html>

@@ -1,0 +1,7 @@
+Spinning 45 8.5 John 30 17
+Yoga 60 10 Emma 40 10
+Pilates 60 10 Emma 45 11
+Boxersice 40 12 Paul 35 7
+Aquafit 50 9 Katie 38 19
+HIIT 30 7.5 Paul 25 15
+Kettlebell 20 5.5 Paul 20 8

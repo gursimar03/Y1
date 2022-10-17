@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worked example from lecture notes</title>
+    <style>
+        img,
+        canvas {
+            width: 500px;
+            height: 500px;
+            border: thin solid black;
+        }
+
+        #loadingMessage {
+            position: absolute;
+            top: 100px;
+            left: 100px;
+            z-index: 100;
+            font-size: 50px;
+        }
+    </style>
+
+    <script>
+        let canvas = null
+        let ctx = null
+        let width = null
+        let height = null
+        let originalImage = null
+        let doubleBuffer = document.createElement('canvas')
+        let doubleBufferCtx = doubleBuffer.getContext('2d')
+        let shadowColour = ['#eee', '#ddd', '#ccc', '#bbb', '#aaa', '#999', '#888', '#777', '#666', '#555']
+        let alphaImage = new Image()
+        alphaImage.src = 'random.jpg'
+
+        window.onload = onAllAssetsLoaded
+        document.write("<div id='loadingMessage'>Loading...</div>")
+
+        function onAllAssetsLoaded() {
+            // hide the webpage loading message
+            document.getElementById('loadingMessage').style.visibility = "hidden"
+
+            originalImage = document.getElementById('originalImage')
+            canvas = document.getElementById('canvas')
+            ctx = canvas.getContext('2d')
+            width = originalImage.clientWidth
+            height = originalImage.clientHeight
+            canvas.width = width
+            canvas.height = height
+            doubleBuffer.width = width
+            doubleBuffer.height = height
+            renderCanvas()
+        }
+
+
+        function renderCanvas() {
+
+            let i = 0
+                // define the shadow offset and colour
+                for (let offset = 10; offset > 0; offset--)
+                {
+                    i++
+                    // 1) define the alpha area    
+                    doubleBufferCtx.drawImage(alphaImage, 10, 10, 350, 350)
+
+                    // 2) select the alpha composite   
+                    doubleBufferCtx.globalCompositeOperation = 'source-in'
+
+                    // 3) draw the original image
+                    // only the part that overlaps the alpha area will be visible
+                    doubleBufferCtx.fillStyle = shadowColour[i]
+                    doubleBufferCtx.fillRect(0, 0, width, height)
+
+                    // draw the saved shadow image onto the canvas slightly below and to the right 
+                    // of where the actual image will be drawn
+                    ctx.drawImage(doubleBuffer, 0, 0, width + offset, height + offset)
+                }
+
+                // draw the image slightly above and to the left of the shadow
+                // this is similar to the code above, except now we draw the
+                // original image rather than its shadow
+                doubleBufferCtx.globalCompositeOperation = 'source-over'
+
+                // 1) define the alpha area
+                doubleBufferCtx.drawImage(alphaImage, 10, 10, 350, 350)
+
+                // 2) select the alpha operation    
+                doubleBufferCtx.globalCompositeOperation = 'source-in'
+
+                // 3) draw the original image
+                // only the part that overlaps the alpha area will be visible
+                doubleBufferCtx.drawImage(originalImage, 0, 0, width, height)
+
+                // draw the saved image onto the canvas slightly below and to the right 
+                // of where the actual image will be drawn   
+                ctx.drawImage(doubleBuffer, 0, 0, width, height)
+        }
+
+
+
+    </script>
+</head>
+
+<body>
+    <img id='originalImage' src='random.jpg'>
+    <canvas id='canvas'></canvas>
+</body>
+
+</html>

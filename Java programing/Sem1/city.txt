@@ -1,0 +1,18 @@
+
+Cork 208669
+Dundalk 39004
+Galway 79934
+gar		20928
+Celbridge		20288
+Wexford 20188	
+
+
+Letterkenny		19274	
+Sligo		19199	
+Greystones 18140	
+Clonmel		17140
+Malahide	16550	
+Carrigaline	15770	
+Leixlip		15504	
+Tullamore 14607 	
+Maynooth		14585	

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Move/Resize several images</title>
+        <style>
+            #canvas
+            {	
+                width:500px;
+                height:500px;
+            }
+
+            #canvas
+            {
+                border:1px solid black;
+                cursor:default;
+            }
+
+            #loadingMessage
+            {
+                position:absolute;
+                top:100px;
+                left:100px;
+                z-index:100;
+                font-size:50px;
+            }
+        </style>
+
+        <script>
+
+            let canvas = null
+            let ctx = null
+            let imageWidth = 100
+            let imageHeight = 100
+            let imageX = 250
+            let imageY = 250
+            let image1 = new Image()
+            image1.src = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTpcjXhFhrdKWVKFx8vd9EPaAYSfUwUEd5rIg&usqp=CAU"
+
+            let imageWidth2 = 100
+            let imageHeight2 = 100
+            let imageX2 = 50
+            let imageY2 = 50
+
+            let image2 = new Image()
+            image2.src = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTt9iPEhw8a3_-vbI7td1CEvXuTCZEeVnqbag&usqp=CAU"
+
+            let image3 = new Image()
+            image3.src = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKFwQX_NmHdqFmvS0soCY_h2Y07chiKh3sBg&usqp=CAU"
+
+            let offsetX = 0
+            let offsetY = 0
+
+            window.onload = onAllAssetsLoaded
+            document.write("<div id='loadingMessage'>Loading...</div>")
+            function onAllAssetsLoaded()
+            {
+
+                document.getElementById('loadingMessage').style.visibility = "hidden"
+
+                canvas = document.getElementById("canvas")
+                ctx = canvas.getContext("2d")
+                canvas.width = canvas.clientWidth
+                canvas.height = canvas.clientHeight
+
+                renderCanvas()
+
+                canvas.addEventListener('mousedown', mousedownHandler)
+                canvas.addEventListener('mousemove', moveHandler)
+                window.onmousewheel = document.onmousewheel = mousewheelHandler
+            }
+
+
+            let images = [{src: image1, x: 250, y: 250, height: 100, width: 100, rotation: 45},
+                {src: image2, x: 50, y: 50, height: 100, width: 100, rotation: 90},
+                {src: image3, x: 150, y: 150, height: 100, width: 100, rotation: 180}]
+
+            currentImageIndex = 0;
+
+            function renderCanvas()
+            {
+                ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+                images.map((image, index) => {
+
+                    ctx.save()
+
+                    ctx.translate((image.x + image.width / 2), (image.y + image.height / 2))
+                    ctx.rotate(Math.radians(image.rotation))
+                    ctx.translate(-(image.x + image.width / 2), -(image.y + image.height / 2))
+
+                    if (currentImageIndex === index) {
+
+                        ctx.beginPath()
+                        ctx.strokeStyle = "red"
+                        ctx.moveTo(image.x, image.y)
+                        ctx.lineTo(image.x + image.width, image.y)
+                        ctx.lineTo(image.x + image.width, image.y + image.height)
+                        ctx.lineTo(image.x, image.y + image.height)
+                        ctx.lineTo(image.x, image.y)
+                        ctx.stroke()
+                        ctx.closePath()
+                    }
+                        
+                        ctx.drawImage(image.src, image.x, image.y, image.width, image.height)
+                        ctx.restore()
+                    
+                })
+
+            }
+
+
+            function mousedownHandler(e)
+            {
+                if (e.which === 1)  // left mouse button
+                {
+                    let canvasBoundingRectangle = canvas.getBoundingClientRect()
+                    mouseX = e.clientX - canvasBoundingRectangle.left
+                    mouseY = e.clientY - canvasBoundingRectangle.top
+                    for (var i = images.length - 1; i > -1; i--) {
+                        if (mouseIsInsideImage(images[i].x, images[i].y, images[i].width, images[i].height, mouseX, mouseY))
+                        {
+                            offsetX = mouseX - images[i].x
+                            offsetY = mouseY - images[i].y
+                         	currentImageIndex = i
+
+							document.getElementById("rotationRange").value = images[currentImageIndex].rotation
+                            break;
+                        }
+                    }
+                }
+            }
+
+
+            function moveHandler(e)
+            {
+                if (e.which === 1)
+                {
+                    let canvasBoundingRectangle = canvas.getBoundingClientRect()
+                    mouseX = e.clientX - canvasBoundingRectangle.left
+                    mouseY = e.clientY - canvasBoundingRectangle.top
+                    // if (mouseIsInsideImage(imageX, imageY, imageWidth, imageHeight, mouseX, mouseY))
+                    {
+
+console.log(currentImageIndex)
+                        images[currentImageIndex].x = mouseX - offsetX
+                        images[currentImageIndex].y = mouseY - offsetY
+                        // ctx.clearRect(0, 0, canvas.width, canvas.height)
+                        //  imageX = mouseX - offsetX
+                        // imageY = mouseY - offsetY
+                        renderCanvas();
+                    }
+                }
+            }
+
+            image1.crossOrigin = "Anonymous";
+            function mousewheelHandler(e)
+            {
+                if (currentImageIndex !== null) {
+
+                    let canvasBoundingRectangle = canvas.getBoundingClientRect()
+                    mouseX = e.clientX - canvasBoundingRectangle.left
+                    mouseY = e.clientY - canvasBoundingRectangle.top
+//                if (mouseIsInsideImage(imgJson[currentImageIndex].x, imgJson[currentImageIndex].y, imgJson[currentImageIndex].width, imgJson[currentImageIndex].height, mouseX, mouseY))
+                    {
+                        oldCentreX = images[currentImageIndex].X + (images[currentImageIndex].width / 2)
+                        oldCentreY = images[currentImageIndex].Y + (images[currentImageIndex].height / 2)
+
+                        images[currentImageIndex].width += e.wheelDelta / 120
+                        images[currentImageIndex].height += e.wheelDelta / 120
+
+                        images[currentImageIndex].X = oldCentreX - (images[currentImageIndex].width / 2)
+                        images[currentImageIndex].Y = oldCentreY - (images[currentImageIndex].height / 2)
+
+                        renderCanvas()
+                    }
+                }
+
+            }
+            function mouseIsInsideImage(imageTopLeftX, imageTopLeftY, imageWidth, imageHeight, x, y)
+            {
+                if ((x > imageTopLeftX) && (y > imageTopLeftY))
+                {
+                    if (x > imageTopLeftX)
+                    {
+                        if ((x - imageTopLeftX) > imageWidth)
+                        {
+                            return false
+                        }
+                    }
+
+                    if (y > imageTopLeftY)
+                    {
+                        if ((y - imageTopLeftY) > imageHeight)
+                        {
+                            return false
+                        }
+                    }
+                } else
+                {
+                    return false
+                }
+                return true
+            }
+
+            function setRotationDegrees(newRotationDegrees)
+            {
+				images[currentImageIndex].rotation = newRotationDegrees
+                renderCanvas()
+            }
+
+            function setGreyScale(flag){
+
+                imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
+                data = imageData.data
+
+                // convert to greyscale
+                let brightnessFactor = 1  // we can add a brightness factor to the greyscale
+                // Loop through the pixels, turning them into grayscale
+                for (let i = 0; i < data.length; i += 4)
+                {
+                    // get the average value
+                    grayScale = ((data[i] * brightnessFactor) + (data[i + 1] * brightnessFactor) + (data[i + 2] * brightnessFactor)) / 3
+                    // assign the same value to red, green and blue to create grayScale
+                    data[i] = grayScale
+                    data[i + 1] = grayScale
+                    data[i + 2] = grayScale
+                }
+
+                ctx.putImageData(imageData, 0, 0)
+            }
+
+            // Convert from degrees to radians.
+            Math.radians = function (degrees)
+            {
+                return degrees * Math.PI / 180
+            }
+        </script>
+    </head>
+
+    <body>
+        <canvas id = "canvas">
+            Your browser does not support the HTML5 'Canvas' tag.
+        </canvas>
+        <!--<input type="range" id="rotationRange" value="0" min="0" max="360" oninput="setRotationDegrees(this.value)"/>
+        <input type="radio" id="greyScale" oninput = "setGreyScale(this.value)"/>-->
+    </body>
+</html>

@@ -1,0 +1,26 @@
+/* 
+    Web Development CA 4
+    Created on : 25 Apr 2022, 09:57:15
+    Author     : Gursimar, Patrick, Matthew
+    Group      : SD1c
+*/
+#myCanvas
+{
+    position:absolute;
+    height: 83.5%;
+    width: 60%;
+    left: 20%;
+    top: 76px;
+    border: 2px solid #23262a;
+    background-color: #23262a;
+}
+
+#loadingMessage
+{
+    position:absolute;
+    top:100px;
+    left:100px;
+    z-index:100;
+    font-size:50px;
+}
+

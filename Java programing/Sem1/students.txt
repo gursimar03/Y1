@@ -1,0 +1,9 @@
+Marilyn Monroe 78 84 41
+Abraham Lincoln 24 35 64
+Nelson Mandela 27 46 62
+John Kennedy 49 91 86
+Winston Churchill 17 45 21
+Donald Trump 29 41 41
+Bill Gates 39 37 61
+Muhammad Ali 84 78 64
+Mahatma Gandhi 91 36 72

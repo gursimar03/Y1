@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worked example from lecture notes</title>
+    <style>
+        img,
+        canvas {
+            width: 500px;
+            height: 500px;
+            border: thin solid black;
+        }
+
+        #loadingMessage {
+            position: absolute;
+            top: 100px;
+            left: 100px;
+            z-index: 100;
+            font-size: 50px;
+        }
+    </style>
+
+    <script>
+        let canvas = null
+        let ctx = null
+        let magnifyCentreX = 100
+        let magnifyCentreY = 200
+        let canvas_left = null
+        let canvas_top = null
+        let originalImage = null
+        let width = null
+        let height = null
+        let rect = null
+        let scale = 5
+        let doubleBuffer = null
+        let doubleBufferCtx = null
+
+        window.onload = onAllAssetsLoaded
+        document.write("<div id='loadingMessage'>Loading...</div>")
+        function onAllAssetsLoaded() {
+
+            document.getElementById('loadingMessage').style.visibility = "hidden"
+
+            originalImage = document.getElementById('originalImage')
+            canvas = document.getElementById('canvas')
+            ctx = canvas.getContext('2d')
+
+            width = originalImage.clientWidth
+            height = originalImage.clientHeight
+
+            doubleBuffer = document.createElement('canvas')
+            doubleBufferCtx = doubleBuffer.getContext('2d')
+            doubleBuffer.width = width
+            doubleBuffer.height = height
+
+            renderCanvas()
+            window.onmousewheel = document.onmousewheel = mousewheelHandler
+            canvas.addEventListener('mousemove', mousemoveHandler)
+        }
+        function mousewheelHandler(e)
+            {
+                
+                scale += e.wheelDelta / 120
+
+                if(scale < 1){
+
+                    scale = 1
+
+                }
+
+                    renderCanvas()
+                
+            }
+
+        function renderCanvas() {
+            canvas.width = width
+            canvas.height = height
+            rect = canvas.getBoundingClientRect()
+            canvas_left = rect.left
+            canvas_top = rect.top
+
+            ctx.globalAlpha = 0.25
+            ctx.drawImage(originalImage, 0, 0, width, height)
+
+
+            ctx.globalAlpha = 1.0
+
+            doubleBuffer.width = width
+            doubleBuffer.height = height
+
+
+            doubleBufferCtx.beginPath()
+            doubleBufferCtx.fillStyle = "red"
+            doubleBufferCtx.arc(magnifyCentreX, magnifyCentreY, 100, 0, Math.PI * 2)
+            doubleBufferCtx.fill()
+            doubleBufferCtx.closePath()
+
+
+
+            doubleBufferCtx.globalCompositeOperation = 'source-in'
+
+
+
+           
+
+            doubleBufferCtx.drawImage(originalImage, -(scale - 1) * magnifyCentreX, -(scale - 1) * magnifyCentreY, width * scale, height * scale)
+
+
+            ctx.drawImage(doubleBuffer, 0, 0, width, height)
+
+
+            ctx.beginPath()
+            ctx.strokeStyle = "black"
+            ctx.arc(magnifyCentreX, magnifyCentreY, 100, 0, Math.PI * 2)
+            ctx.stroke()
+            ctx.closePath()
+        }
+
+
+        function mousemoveHandler(e) {
+            let canvasBoundingRectangle = canvas.getBoundingClientRect()
+            magnifyCentreX = e.clientX - canvasBoundingRectangle.left
+            magnifyCentreY = e.clientY - canvasBoundingRectangle.top
+
+            renderCanvas()
+        }
+    </script>
+</head>
+
+<body>
+    <img id='originalImage' src='random.jpg'>
+    <canvas id='canvas'></canvas>
+</body>
+
+</html>

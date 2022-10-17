@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Worked example from lecture notes</title>
+<style>
+img,
+canvas
+{
+    width:500px;
+    height:500px;
+    border:thin solid black;
+}
+
+#loadingMessage
+{
+    position:absolute;
+    top:100px;
+    left:100px;
+    z-index:100;
+    font-size:50px;
+}
+</style>
+
+<script>
+let canvas = null;
+let ctx = null;
+let width = null;
+let height = null;
+let originalImage = null;
+let imageData = null;
+let data = null;
+
+
+window.onload = onAllAssetsLoaded;
+document.write("<div id='loadingMessage'>Loading...</div>");
+function onAllAssetsLoaded()
+{
+    // hide the webpage loading message
+    document.getElementById('loadingMessage').style.visibility = "hidden";
+
+    originalImage = document.getElementById('originalImage');
+    canvas = document.getElementById('canvas');
+    ctx = canvas.getContext('2d');
+    width = originalImage.clientWidth;
+    height = originalImage.clientHeight;
+    canvas.width = width;
+    canvas.height = height;
+
+    renderCanvas();
+}
+
+
+function renderCanvas()
+{
+    ctx.drawImage(originalImage, 0, 0, canvas.width, canvas.height);
+    imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    data = imageData.data;
+
+    // Loop through the pixels, posterising them 
+    for (let i = 0; i < data.length; i += 4)
+    {
+        data[i + 0] = data[i + 0] - data[i + 0] % 64;
+        data[i + 1] = data[i + 1] - data[i + 1] % 64;
+        data[i + 2] = data[i + 2] - data[i + 2] % 64;
+        data[i + 3] = 255;
+    }
+
+    ctx.putImageData(imageData, 0, 0);
+}
+</script>
+</head>
+
+<body>
+<img id = 'originalImage' src = 'images.jpg'>
+<canvas id = 'canvas'></canvas>
+</body>
+</html>
